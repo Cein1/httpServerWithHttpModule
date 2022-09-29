@@ -37,12 +37,12 @@ posts = [
 const httpRequestListener = function (request, response) {
   const { url, method } = request
     if (method === 'POST') { // (3)
-            if (url === '/login') {
+            if (url === '/postCreat') {
                 let body = ''; // (4)
                 request.on('data', (data) => {body += data;}) // (5)
                 
                 response.writeHead(201, {'Content-Type' : 'application/json'}); // (4)
-                response.end(JSON.stringify({message : "userCreated"})) // (5)
+                response.end(JSON.stringify({message : "postCreated"})) // (5)
                 
                 // stream을 전부 받아온 이후에 실행
                 request.on('end', () => {  // (6)
