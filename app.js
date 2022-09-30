@@ -33,28 +33,35 @@ const posts = [
 
 const httpRequestListener = function (request, response) {
   const { url, method } = request;
-    if (method === 'POST') { // (3)
-            if (url === '/users/login') {
-                let body = ''; // (4)
-                request.on('data', (data) => {body += data;}) // (5)
-                
-                // stream을 전부 받아온 이후에 실행
-                request.on('end', () => {  // (6)
-                    const user = JSON.parse(body); //(7) 
+  if (method === 'GET') {
+    if (url === '/ping') {
+      response.writeHead(200, {'Content-Type' : 'application/json'});
+      response.end(JSON.stringify({message : 'pong'}));
+    }
+  }
 
-                    users.push({ // (8)
-                        id : user.id,
-                        name : user.name,
-                        email: user.email,
-                        password : user.password
-                    });
+  if (method === 'POST') { // (3)
+    if (url === '/users/login') {
+        let body = ''; // (4)
+        request.on('data', (data) => {body += data;}) // (5)
+        
+        // stream을 전부 받아온 이후에 실행
+        request.on('end', () => {  // (6)
+            const user = JSON.parse(body); //(7) 
 
-                    response.writeHead(200, {'Content-Type' : 'application/json'});
-                    response.end(JSON.stringify({"message" : "userCreated"}));
+            users.push({ // (8)
+              id : user.id,
+              name : user.name,
+              email: user.email,
+              password : user.password
+            });
 
-                });
-        };
+            response.writeHead(200, {'Content-Type' : 'application/json'});
+            response.end(JSON.stringify({"message" : "userCreated"}));
+
+        });
     };
+  };
 };
 
 server.on("request", httpRequestListener);
