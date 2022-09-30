@@ -1,10 +1,7 @@
 const http = require('http'); // (1)
 const server = http.createServer();
 
-let users = [];
-let posts = [];
-
-users = [ // (2)
+const users = [ // (2)
   {
     id: 1,
     name: "Rebekah Johnson",
@@ -17,9 +14,9 @@ users = [ // (2)
     email: "Connell29@gmail.com",
     password: "password",
   },
-]
+];
 
-posts = [
+const posts = [
   {
     id: 1,
     title: "간단한 HTTP API 개발 시작!",
@@ -35,14 +32,11 @@ posts = [
 ];
 
 const httpRequestListener = function (request, response) {
-  const { url, method } = request
+  const { url, method } = request;
     if (method === 'POST') { // (3)
             if (url === '/postCreat') {
                 let body = ''; // (4)
                 request.on('data', (data) => {body += data;}) // (5)
-                
-                response.writeHead(201, {'Content-Type' : 'application/json'}); // (4)
-                response.end(JSON.stringify({message : "postCreated"})) // (5)
                 
                 // stream을 전부 받아온 이후에 실행
                 request.on('end', () => {  // (6)
@@ -53,10 +47,14 @@ const httpRequestListener = function (request, response) {
                         name : user.name,
                         email: user.email,
                         password : user.password
-                    })
-                })
-        }
-    }
+                    });
+
+                    response.writeHead(200, {'Content-Type' : 'application/json'});
+                    response.end(JSON.stringify({"users" : users}));
+
+                });
+        };
+    };
 };
 
 server.on("request", httpRequestListener);
@@ -64,3 +62,5 @@ server.on("request", httpRequestListener);
 server.listen(8000, '127.0.0.1', function() { 
     console.log('Listening to requests on port 8000');
 });
+
+// 서버를 껐다 켜게 되면, users 변수는 메모리에 값을 저장하기 때문에 저장했던 모든 값이 다시 초기화가 됩니다. 그래서 데이터를 영구적으로 저장할 수 있는 데이터베이스 시스템이 필요합니다.
