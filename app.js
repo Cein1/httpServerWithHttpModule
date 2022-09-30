@@ -41,9 +41,9 @@ const httpRequestListener = function (request, response) {
   }
 
   if (method === 'POST') { // (3)
-    if (url === '/users/login') {
+    if (url === '/users/signup') {
         let body = ''; // (4)
-        request.on('data', (data) => {body += data;}) // (5)
+        request.on('data', (data) => {body += data}); // (5)
         
         // stream을 전부 받아온 이후에 실행
         request.on('end', () => {  // (6)
@@ -60,8 +60,8 @@ const httpRequestListener = function (request, response) {
             response.end(JSON.stringify({"message" : "userCreated"}));
 
         });
-    };
-  };
+    }; 
+  }
 };
 
 server.on("request", httpRequestListener);
