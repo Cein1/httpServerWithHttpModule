@@ -60,7 +60,33 @@ const httpRequestListener = function (request, response) {
       response.writeHead(200, {'Content-Type' : 'application/json'});
       response.end(JSON.stringify({ "data" : dataAllPosts }));
     });
-  }
+  } else if(url === '/posts/detailedList') { //과제 6번 완료
+  let body = '';
+  request.on('data', (data) => {body += data});
+  request.on('end', () => {
+    const user = JSON.parse(body);
+    
+    const indexFindUserName = users.findIndex((element) => element.id === Number(user.id));
+    // const indexPostUserId = posts.findIndex((element) => element.userId === Number(user.id)); // request의 user.id === posts['element'].userId인 index
+    const userPosts = {
+      'userID': Number(user.id),
+      'userName' : users[indexFindUserName].name,
+      'postings' : []
+    };
+      for (let i=0 ; i < posts.length ; i++) {
+        const obj = {
+        "postingId" : posts[i].id,
+        "postingName" : posts[i].title,
+        "postingContent" : posts[i].content
+        };
+        if (posts[i].userId === user.id) {
+            userPosts.postings.push(obj);
+        };
+        };
+    
+    response.writeHead(200, {'Content-Type' : 'application/json'});
+    response.end(JSON.stringify({ "data" : userPosts }));
+  });
 };
   if (method === 'POST') { // (3)
     if (url === '/users/signup') { //과제 1번
@@ -165,6 +191,7 @@ if (method === 'DELETE') { // 과제 5번
 
       });
 
+};
 };
 };
 };
