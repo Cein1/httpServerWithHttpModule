@@ -38,9 +38,30 @@ const httpRequestListener = function (request, response) {
     if (url === '/ping') {
       response.writeHead(200, {'Content-Type' : 'application/json'});
       response.end(JSON.stringify({message : 'pong'}));
-    };
-  };
+    } else if (url === '/posts/list') { // 과제 3번 완료
 
+    let body = '';
+    request.on('data', (data) => {body += data}); //필요한 부분인지 다시보자
+    request.on('end', () => {
+
+      const dataAllPosts = [];
+
+      for (let i=0; i<posts.length; i++) {
+        const findPostOwner = users.findIndex((element) => element.id === posts[i].userId);
+        const formatData = {
+          'userID': users[findPostOwner].id,
+          'userName' : users[findPostOwner].name,
+          "postingId" : posts[i].id,
+          "postingName" : posts[i].title,
+          "postingContent" : posts[i].content
+        };
+        dataAllPosts.push(formatData);
+      };
+      response.writeHead(200, {'Content-Type' : 'application/json'});
+      response.end(JSON.stringify({ "data" : dataAllPosts }));
+    });
+  }
+};
   if (method === 'POST') { // (3)
     if (url === '/users/signup') { //과제 1번
       let body = ''; // (4)
