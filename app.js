@@ -87,4 +87,5 @@ server.on("request", httpRequestListener);
 server.listen(8000, '127.0.0.1', function() { 
     console.log('Listening to requests on port 8000');
 });
+
 /* 서버를 껐다 켜게 되면, users 변수는 메모리에 값을 저장하기 때문에 저장했던 모든 값이 다시 초기화가 됩니다. 그래서 데이터를 영구적으로 저장할 수 있는 데이터베이스 시스템이 필요합니다.*/
