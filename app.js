@@ -120,7 +120,7 @@ if (method === 'PATCH') { // 과제 4번
           if(postsI.title !== post.title) {
             thePostObj["title"] = post.title;
           } else if(postsI.content !== post.content) {
-            
+
             thePostObj["content"] = post.content;
           }; // element.title만 적정한 것으로 바꾸면 된다.
 
@@ -147,8 +147,27 @@ if (method === 'PATCH') { // 과제 4번
   };
 
 };
-};
+if (method === 'DELETE') { // 과제 5번
+  if (url === '/posts/delete') {
+      let body = ''; // (4)
+      request.on('data', (data) => {body += data}); // (5)
 
+      // stream을 전부 받아온 이후에 실행
+      request.on('end', () => {  // (6)
+          const post = JSON.parse(body); //(7)
+
+          // 없애고자 하는 post.id의 인덱스를 정의해서 ---> posts의 해당 객체를 없애자
+          const index0 = posts.findIndex((element) => element['id'] === post.id); // body에 들어온 post.id의 인덱스를 정의했다.
+          posts.splice(index0, 1);// 이제 index0를 활용해서 해당 post를 없애보자
+
+          response.writeHead(204, {'Content-Type' : 'application/json'});
+          response.end(JSON.stringify({"data" : "postingDeleted"}));
+
+      });
+
+};
+};
+};
 server.on("request", httpRequestListener);
 
 server.listen(8000, '127.0.0.1', function() { 
