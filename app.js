@@ -101,6 +101,52 @@ const httpRequestListener = function (request, response) {
       });
     }
 }
+if (method === 'PATCH') { // 과제 4번
+  if (url === '/posts/update') {
+      let body = ''; // (4)
+      request.on('data', (data) => {body += data}); // (5)
+      
+      // stream을 전부 받아온 이후에 실행
+      request.on('end', () => {  // (6)
+          const post = JSON.parse(body); //(7)
+
+          // posts에 새로운 포스팅내역 업데이트
+          // posts 중 value가 업데이트된 객체의 index를 알아야 한다. // 포스팅 Title, Content가 변경될 경우
+          const index1 = posts.findIndex((element) => (element.title !== post.title || element.content !== post.content));
+          const thePostObj = posts[index1];
+
+          const postsI = posts[index1];
+
+          if(postsI.title !== post.title) {
+            thePostObj["title"] = post.title;
+          } else if(postsI.content !== post.content) {
+            
+            thePostObj["content"] = post.content;
+          }; // element.title만 적정한 것으로 바꾸면 된다.
+
+          const newObj = {// 하나의 포스트만 업데이트 했을 때를 가정함
+            "userId": post.userId,
+            "userName": '',
+            "postingId":post.id,
+            "postingTitle":post.title,
+            "postingContent":post.content
+          };
+
+          const index2 = users.findIndex((element) => (element.id === newObj.userId)); // users의 요소들 중, 프로퍼티 value가 id === post.userId인 요소의 index를 알고 싶다 // users라는 배열을 순회하면서, ith 요소.userId
+
+          const userObj = users[index2]; // userObj는 포스트유저 아이디와 동일한 유저아이디를 가지고 있는 유저 객체를 말한다.
+    
+          if(newObj.userId === userObj['id']) { //  users의 요소들 중, 프로퍼티 value가 id === post.userId인 요소를 찾아라, 그리고 해당 user 객체의 프로퍼티 중 'name' key의 value를 뱉어라
+            newObj["userName"] = userObj['name'];
+          }
+
+          response.writeHead(201, {'Content-Type' : 'application/json'});
+          response.end(JSON.stringify({"data" : newObj}));
+
+      });
+  };
+
+};
 };
 
 server.on("request", httpRequestListener);
